@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class Game implements GameInterface {
 
     private int[][] board;
+    private String[][] moveList;
 
     public Game(int nRows, int nCols) {
         int[][] board = new int[nRows][nCols];
@@ -21,6 +22,22 @@ public class Game implements GameInterface {
         setBoard(board);
     }
 
+    public void moveBoard() {
+        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+        String[][] moveList = new String[board.length][board[0].length];
+        int Counter1 = 0;
+        for (String[] row : moveList) {
+            int Counter2 = 0;
+            for (String cell : row) {
+                moveList[Counter1][Counter2] = abc[Counter1] + String.valueOf(Counter2 + 1);
+                Counter2++;
+            }
+            Counter1++;
+        }
+        setMoveList(moveList);
+    }
+
     public int[][] getBoard() {
         return board;
     }
@@ -29,24 +46,19 @@ public class Game implements GameInterface {
         this.board = board;
     }
 
-    public int[] getMove(int player) {
-        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-        String[][] moveList = new String[board.length][board[0].length];
-        int Counter = 0;
-        for (String[] row : moveList) {
-            int Counter2 = 0;
-            for (String cell : row) {
-                moveList[Counter][Counter2] = abc[Counter] + String.valueOf(Counter2 + 1);
-                Counter2++;
-            }
-            Counter++;
-        }
+    public String[][] getMoveList() {
+        return moveList;
+    }
 
+    public void setMoveList(String[][] moveList) {
+        this.moveList = moveList;
+    }
+
+    public int[] getMove(int player) {
         boolean valid = false;
         Scanner myObj = new Scanner(System.in);
         String move;
-        System.out.println("Enter your move: ");
+        System.out.println("Enter your move player " + player + ": ");
         move = myObj.nextLine();
 
         while (!valid) {
@@ -57,27 +69,36 @@ public class Game implements GameInterface {
                     }
                 }
             }
+
+            if (move.equals("Quit") || move.equals("quit")) {
+                System.out.println("Thank you for playing!");
+                java.lang.System.exit(0);
+            }
+
             if (!valid) {
                 System.out.println("Invalid input or position is already taken");
-                System.out.println("Enter your move: ");
+                System.out.println("Enter your move player " + player + ": ");
                 move = myObj.nextLine();
             }
+
         }
 
-        Counter = 0;
+        int[] coordinates = {0, 0};
+
+        int Counter = 0;
         for (String[] row : moveList) {
             int Counter2 = 0;
             for (String cell : row) {
                 if (cell.equals(move)) {
                     moveList[Counter][Counter2] = "---";
+                    coordinates = new int[] {Counter, Counter2};
                 }
                 Counter2++;
             }
             Counter++;
         }
-        System.out.println(Arrays.deepToString(moveList));
 
-        return null;
+        return coordinates;
     }
 
     public int[] getAiMove(int player) {
@@ -85,6 +106,18 @@ public class Game implements GameInterface {
     }
 
     public void mark(int player, int row, int col) {
+        int Counter = 0;
+        for (int[] actualRow : board) {
+            int Counter2 = 0;
+            for (int actualCell : actualRow) {
+                if (Counter == row && Counter2 == col) {
+                    board[Counter][Counter2] = player;
+                }
+                Counter2++;
+            }
+            Counter++;
+        }
+        System.out.println(Arrays.deepToString(board));
     }
 
     public boolean hasWon(int player, int howMany) {
@@ -105,5 +138,17 @@ public class Game implements GameInterface {
     }
 
     public void play(int howMany) {
+        moveBoard();
+        int player = 1;
+        while (!isFull() || !hasWon(player, howMany)) {
+            int[] actualCoordinate = getMove(player);
+            mark(player, actualCoordinate[0], actualCoordinate[1]);
+            if (player == 1) {
+                player = 2;
+            }
+            else {
+                player = 1;
+            }
+        }
     }
 }
