@@ -496,6 +496,11 @@ public class Game implements GameInterface {
         int[] actualCoordinate;
         while (!isFull() || !hasWon(player, howMany)) {
             if (player == aiPlayer){
+                try{
+                 Thread.sleep(1000);
+                } catch (InterruptedException ie){
+                    Thread.currentThread().interrupt();
+                }
                 actualCoordinate = getAiMove(player);
             } else {
                 actualCoordinate = getMove(player);
