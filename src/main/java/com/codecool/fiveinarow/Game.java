@@ -72,7 +72,7 @@ public class Game implements GameInterface {
 
             if (move.equals("Quit") || move.equals("quit")) {
                 System.out.println("Thank you for playing!");
-                java.lang.System.exit(0);
+                System.exit(0);
             }
 
             if (!valid) {
@@ -117,7 +117,6 @@ public class Game implements GameInterface {
             }
             Counter++;
         }
-        System.out.println(Arrays.deepToString(board));
     }
 
     public boolean hasWon(int player, int howMany) {
@@ -125,6 +124,21 @@ public class Game implements GameInterface {
     }
 
     public boolean isFull() {
+        int Counter = 0;
+        int nullCounter = 0;
+        for (int[] row : board) {
+            int Counter2 = 0;
+            for (int cell : row) {
+                if(board[Counter][Counter2] == 0){
+                    nullCounter++;
+                }
+                Counter2++;
+            }
+            Counter++;
+        }
+        if(nullCounter == 0){
+            return true;
+        }
         return false;
     }
 
@@ -132,6 +146,10 @@ public class Game implements GameInterface {
     }
 
     public void printResult(int player) {
+        if(player == 0){
+            System.out.println("It's a tie!");
+            System.exit(0);
+        }
     }
 
     public void enableAi(int player) {
@@ -143,6 +161,9 @@ public class Game implements GameInterface {
         while (!isFull() || !hasWon(player, howMany)) {
             int[] actualCoordinate = getMove(player);
             mark(player, actualCoordinate[0], actualCoordinate[1]);
+            if (isFull()){
+                printResult(0);
+            }
             if (player == 1) {
                 player = 2;
             }
