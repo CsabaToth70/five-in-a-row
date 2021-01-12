@@ -401,6 +401,36 @@ public class Game implements GameInterface {
     }
 
     public void printBoard() {
+        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+        String header = " ";
+        for (int i=0; i<= board.length; i++){
+            if(i==0){
+                header = header + "  ";
+            } else if (i > 0 && i < 10){
+                header = header + i + "  ";
+            } else if (i >= 10){
+                header = header + i + " ";
+            }
+        }
+        System.out.println(header);
+        String rowToPrint = "";
+        int counter = 0;
+        for(int[] row: board){
+            rowToPrint = rowToPrint + abc[counter] + "  ";
+            for(int cell: row){
+                if(cell==0){
+                    rowToPrint = rowToPrint + ".  ";
+                } else if ( cell == 1){
+                    rowToPrint = rowToPrint + "X  ";
+                } else if ( cell == 2){
+                    rowToPrint = rowToPrint + "O  ";
+                }
+            }
+            System.out.println(rowToPrint);
+            rowToPrint = "";
+        counter++;
+        }
     }
 
     public void printResult(int player) {
@@ -419,9 +449,13 @@ public class Game implements GameInterface {
     public void play(int howMany) {
         moveBoard();
         int player = 1;
+        printBoard();
         while (!isFull() || !hasWon(player, howMany)) {
             int[] actualCoordinate = getMove(player);
             mark(player, actualCoordinate[0], actualCoordinate[1]);
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+            printBoard();
             if (hasWon(player, howMany)){
                 printResult(player);
             }
