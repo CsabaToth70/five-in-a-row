@@ -2,6 +2,7 @@ package com.codecool.fiveinarow;
 
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Random;
 
 public class Game implements GameInterface {
 
@@ -101,8 +102,52 @@ public class Game implements GameInterface {
         return coordinates;
     }
 
+    public String aiDecision(){
+        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+        String move="";
+        Random rand = new Random();
+        char randRowString = '#';
+        String randColString = "";
+        int randRowInt = rand.nextInt(board.length-1);
+        randRowString = abc[randRowInt];
+        int randColInt = rand.nextInt(board[0].length-1);
+        randColString = String.valueOf(randColInt);
+        move = randRowString + randColString;
+        return move;
+    }
+
     public int[] getAiMove(int player) {
-        return null;
+        boolean valid = false;
+        String move;
+        System.out.println("Enter your move player " + player + ": ");
+        move = aiDecision(); // AI input pl. A4
+        while (!valid) {
+            for (String[] row : moveList) {
+                for (String cell : row) {
+                    if (cell.equals(move)) {
+                        valid = true;
+                    }
+                }
+            }
+            if (!valid) {
+                move = aiDecision(); // AI input pl. A5
+            }
+        }
+        int[] coordinates = {0, 0};
+        int Counter = 0;
+        for (String[] row : moveList) {
+            int Counter2 = 0;
+            for (String cell : row) {
+                if (cell.equals(move)) {
+                    moveList[Counter][Counter2] = "---";
+                    coordinates = new int[] {Counter, Counter2};
+                }
+                Counter2++;
+            }
+            Counter++;
+        }
+        return coordinates;
     }
 
     public void mark(int player, int row, int col) {
@@ -443,7 +488,35 @@ public class Game implements GameInterface {
         }
     }
 
-    public void enableAi(int player) {
+    public void enableAi(int player, int howMany) {
+        int aiPlayer = player;
+        player = 1;
+        moveBoard();
+        printBoard();
+        int[] actualCoordinate;
+        while (!isFull() || !hasWon(player, howMany)) {
+            if (player == aiPlayer){
+                actualCoordinate = getAiMove(player);
+            } else {
+                actualCoordinate = getMove(player);
+            }
+            mark(player, actualCoordinate[0], actualCoordinate[1]);
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+            printBoard();
+            if (hasWon(player, howMany)){
+                printResult(player);
+            }
+            if (isFull()){
+                printResult(0);
+            }
+            if (player == 1) {
+                player = 2;
+            }
+            else {
+                player = 1;
+            }
+        }
     }
 
     public void play(int howMany) {
