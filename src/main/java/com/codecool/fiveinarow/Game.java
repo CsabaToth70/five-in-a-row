@@ -119,7 +119,265 @@ public class Game implements GameInterface {
         }
     }
 
+    private boolean checkUp(int player, int howMany) {
+        int counter = 0;
+        int playerCounter = 0;
+        boolean result = false;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if(player == cell){
+                    for(int i=0; i > (howMany*(-1)); i--){
+                        if(counter+i >= 0){
+                            if(board[counter+i][counter2] == player){
+                                playerCounter++;
+                            }
+                        }
+                    }
+                    if(playerCounter == howMany){
+                        result = true;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        if(result){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkUpRight(int player, int howMany) {
+        int counter = 0;
+        int playerCounter = 0;
+        boolean result = false;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if(player == cell) {
+                    for (int i = 0; i > (howMany * (-1)); i--) {
+                        if(counter + i >= 0 && (counter2 + i * (-1)) < board[0].length){
+                            if (board[counter + i][counter2 + i * (-1)] == player) {
+                                playerCounter++;
+                            }
+                        }
+                    }
+                    if(playerCounter == howMany){
+                        result = true;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        if(result){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkUpLeft(int player, int howMany) {
+        int counter = 0;
+        int playerCounter = 0;
+        boolean result = false;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if (player == cell) {
+                    for (int i = 0; i > (howMany * (-1)); i--) {
+                        if(counter + i >= 0 && counter2 + i >= 0){
+                            if (board[counter + i][counter2 + i] == player) {
+                                playerCounter++;
+                            }
+                        }
+
+                    }
+                    if(playerCounter == howMany){
+                        result = true;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        if(result){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkRight(int player, int howMany) {
+        int counter = 0;
+        int playerCounter = 0;
+        boolean result = false;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if (player == cell) {
+                    for (int i = 0; i < howMany; i++) {
+                        if(counter2 + i < board[0].length){
+                            if (board[counter][counter2 + i] == player) {
+                                playerCounter++;
+                            }
+                        }
+                    }
+                    if(playerCounter == howMany){
+                        result = true;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        if(result){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkDownRight(int player, int howMany) {
+        int counter = 0;
+        int playerCounter = 0;
+        boolean result = false;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if (player == cell) {
+                    for (int i = 0; i < howMany; i++) {
+                        if(counter + i < board.length && counter2 + i < board[0].length){
+                            if (board[counter + i][counter2 + i] == player) {
+                                playerCounter++;
+                            }
+                        }
+                    }
+                    if(playerCounter == howMany){
+                        result = true;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        if(result){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkDown(int player, int howMany) {
+        int counter = 0;
+        int playerCounter = 0;
+        boolean result = false;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if (player == cell) {
+                    for (int i = 0; i < howMany; i++) {
+                        if(counter + i < board.length){
+                            if (board[counter + i][counter2] == player) {
+                                playerCounter++;
+                            }
+                        }
+                    }
+                    if(playerCounter == howMany){
+                        result = true;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        if(result){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkDownLeft(int player, int howMany) {
+        int counter = 0;
+        int playerCounter = 0;
+        boolean result = false;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if (player == cell) {
+                    for (int i = 0; i > (howMany * (-1)); i--) {
+                        if(counter + i * (-1) < board.length && counter2 + i >= 0){
+                            if (board[counter + i * (-1)][counter2 + i] == player) {
+                                playerCounter++;
+                            }
+                        }
+                    }
+                    if(playerCounter == howMany){
+                        result = true;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        if(result){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkLeft(int player, int howMany) {
+        int counter = 0;
+        int playerCounter = 0;
+        boolean result = false;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if (player == cell) {
+                    for (int i = 0; i > (howMany * (-1)); i--) {
+                        if(counter2 + i >= 0){
+                            if (board[counter][counter2 + i] == player) {
+                                playerCounter++;
+                            }
+                        }
+                    }
+                    if(playerCounter == howMany){
+                        result = true;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        if(result){
+            return true;
+        }
+        return false;
+    }
+
     public boolean hasWon(int player, int howMany) {
+        if(checkUp(player, howMany)){
+             return true;
+        } else if (checkUpRight(player, howMany)){
+            return true;
+        } else if (checkUpLeft(player, howMany)){
+            return true;
+        } else if (checkRight(player, howMany)){
+            return true;
+        } else if (checkDownRight(player, howMany)){
+            return true;
+        } else if (checkDown(player, howMany)){
+            return true;
+        } else if (checkDownLeft(player, howMany)){
+            return true;
+        } else if (checkLeft(player, howMany)){
+            return true;
+        }
         return false;
     }
 
@@ -149,6 +407,9 @@ public class Game implements GameInterface {
         if(player == 0){
             System.out.println("It's a tie!");
             System.exit(0);
+        } else {
+            System.out.println("Player " + player + " has won!");
+            System.exit(0);
         }
     }
 
@@ -161,6 +422,9 @@ public class Game implements GameInterface {
         while (!isFull() || !hasWon(player, howMany)) {
             int[] actualCoordinate = getMove(player);
             mark(player, actualCoordinate[0], actualCoordinate[1]);
+            if (hasWon(player, howMany)){
+                printResult(player);
+            }
             if (isFull()){
                 printResult(0);
             }
