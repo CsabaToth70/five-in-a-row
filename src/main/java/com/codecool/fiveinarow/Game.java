@@ -407,7 +407,7 @@ public class Game implements GameInterface {
 
     public boolean hasWon(int player, int howMany) {
         if(checkUp(player, howMany)){
-             return true;
+            return true;
         } else if (checkUpRight(player, howMany)){
             return true;
         } else if (checkUpLeft(player, howMany)){
@@ -474,7 +474,7 @@ public class Game implements GameInterface {
             }
             System.out.println(rowToPrint);
             rowToPrint = "";
-        counter++;
+            counter++;
         }
     }
 
@@ -488,63 +488,43 @@ public class Game implements GameInterface {
         }
     }
 
-    public void enableAi(int player, int howMany) {
-        int aiPlayer = player;
-        player = 1;
-        moveBoard();
-        printBoard();
-        int[] actualCoordinate;
-        while (!isFull() || !hasWon(player, howMany)) {
-            if (player == aiPlayer){
-                try{
-                 Thread.sleep(1000);
-                } catch (InterruptedException ie){
-                    Thread.currentThread().interrupt();
-                }
-                actualCoordinate = getAiMove(player);
-            } else {
-                actualCoordinate = getMove(player);
-            }
-            mark(player, actualCoordinate[0], actualCoordinate[1]);
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
-            printBoard();
-            if (hasWon(player, howMany)){
-                printResult(player);
-            }
-            if (isFull()){
-                printResult(0);
-            }
-            if (player == 1) {
-                player = 2;
-            }
-            else {
-                player = 1;
-            }
+    public int[] enableAi(int player) {
+        try{
+            Thread.sleep(1000);
+        } catch (InterruptedException ie){
+            Thread.currentThread().interrupt();
         }
+        int[] coordinates = getAiMove(player);
+        return coordinates;
     }
 
     public void play(int howMany) {
         moveBoard();
-        int player = 1;
+        int currentPlayer = 1;
+        int AIPlayer = 1;
         printBoard();
-        while (!isFull() || !hasWon(player, howMany)) {
-            int[] actualCoordinate = getMove(player);
-            mark(player, actualCoordinate[0], actualCoordinate[1]);
+        while (!isFull() || !hasWon(currentPlayer, howMany)) {
+            int[] actualCoordinate;
+            if (currentPlayer == AIPlayer) {
+                actualCoordinate = enableAi(currentPlayer);
+            } else {
+                actualCoordinate = getMove(currentPlayer);
+            }
+            mark(currentPlayer, actualCoordinate[0], actualCoordinate[1]);
             System.out.print("\033[H\033[2J");
             System.out.flush();
             printBoard();
-            if (hasWon(player, howMany)){
-                printResult(player);
+            if (hasWon(currentPlayer, howMany)){
+                printResult(currentPlayer);
             }
             if (isFull()){
                 printResult(0);
             }
-            if (player == 1) {
-                player = 2;
+            if (currentPlayer == 1) {
+                currentPlayer = 2;
             }
             else {
-                player = 1;
+                currentPlayer = 1;
             }
         }
     }
