@@ -86,17 +86,17 @@ public class Game implements GameInterface {
 
         int[] coordinates = {0, 0};
 
-        int Counter = 0;
+        int counter = 0;
         for (String[] row : moveList) {
-            int Counter2 = 0;
+            int counter2 = 0;
             for (String cell : row) {
                 if (cell.equals(move)) {
-                    moveList[Counter][Counter2] = "---";
-                    coordinates = new int[] {Counter, Counter2};
+                    moveList[counter][counter2] = "---";
+                    coordinates = new int[] {counter, counter2};
                 }
-                Counter2++;
+                counter2++;
             }
-            Counter++;
+            counter++;
         }
 
         return coordinates;
@@ -110,19 +110,15 @@ public class Game implements GameInterface {
         for (int[] row : board) {
             int counter2 = 0;
             for (int cell : row) {
-                if (player == cell) {
-                    for (int j = 0; j < 8; j++) {
-                        results = checkDirection(player, howMany, counter, counter2, playerCounter, j);
-                        if (results[0] == howMany - 1) {
-                            System.out.println("AIEasyWin if");
-                            move[0] = 1;
-                            move[1] = results[1];
-                            move[2] = results[2];
-                            System.out.println("Row: " + move[1]);
-                            System.out.println("Col: " + move[2]);
-                            return move;
-                        }
+                for (int j = 0; j < 8; j++) {
+                    results = checkDirection(player, howMany, counter, counter2, playerCounter, j);
+                    if (results[0] == howMany - 1 && board[counter][counter2] == 0) {
+                        move[0] = 1;
+                        move[1] = counter;
+                        move[2] = counter2;
+                        return move;
                     }
+                    playerCounter = 0;
                 }
                 counter2++;
             }
@@ -136,7 +132,7 @@ public class Game implements GameInterface {
                 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         String move="";
         Random rand = new Random();
-        char randRowString = '#';
+        char randRowString = ' ';
         String randColString = "";
         int randRowInt = rand.nextInt(board.length-1);
         randRowString = abc[randRowInt];
@@ -160,7 +156,6 @@ public class Game implements GameInterface {
                 break;
             }
         }
-        System.out.println("Random move: " + move);
         return move;
     }
 
@@ -168,7 +163,7 @@ public class Game implements GameInterface {
         char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
                 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         String move = "";
-        move = abc[row] + String.valueOf(col);
+        move = abc[row] + String.valueOf(col+1);
         return move;
     }
 
@@ -176,52 +171,62 @@ public class Game implements GameInterface {
         String move;
         System.out.println("Enter your move player " + player + ": ");
         if (aiEasyWin(player, howMany)[0] == 1) {
-            move = aiTransformCoordinates(aiEasyWin(player, howMany)[1], aiEasyWin(player, howMany)[2] + 1);
-            System.out.println(move);
+            move = aiTransformCoordinates(aiEasyWin(player, howMany)[1], aiEasyWin(player, howMany)[2]);
         }
         else {
-            move = aiRandom(); // AI input pl. A4
+            move = aiRandom();
         }
         int[] coordinates = new int[2];
-        int Counter = 0;
+        int counter = 0;
         for (String[] row : moveList) {
-            int Counter2 = 0;
+            int counter2 = 0;
             for (String cell : row) {
                 if (cell.equals(move)) {
-                    System.out.println("Filled cell: " + cell);
-                    moveList[Counter][Counter2] = "---";
-                    coordinates[0] = Counter;
-                    coordinates[1] = Counter2;
+                    moveList[counter][counter2] = "---";
+                    coordinates[0] = counter;
+                    coordinates[1] = counter2;
                 }
-                Counter2++;
+                counter2++;
             }
-            Counter++;
+            counter++;
         }
-        System.out.println("Coordinates: " + Arrays.toString(coordinates));
         return coordinates;
     }
 
-//    public int[] checkMiddleCell(int player, int lineLength, int rowToCheck, int colToCheck){
-//        int[] resultList = new int[] {0, -1, -1, -1};
-//        int distance= (lineLength/2)+1;
-//        int counter = 0;
-//        int playerCounter = 0;
-//
-//        int upSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 0)[0];
-//        int downSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 4)[0];
-//        int verticalSigns = upSigns + downSigns;
-//
-//        int leftSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 6)[0];
-//        int rightSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 2)[0];
-//        int horizontalSigns = leftSigns + rightSigns;
-//
-//        int upLeftSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 7)[0];
-//        int downRightSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 3)[0];
-//        int backSlashSigns = upLeftSigns + downRightSigns;
-//
-//
-//        return resultList;
-//    }
+    public int checkMiddleCell(int player, int lineLength, int rowToCheck, int colToCheck){
+        int distance= (lineLength/2)+1;
+        int playerCounter = 0;
+
+        int upSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 0)[0];
+        int downSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 4)[0];
+        int verticalSigns = upSigns + downSigns;
+
+        int leftSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 6)[0];
+        int rightSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 2)[0];
+        int horizontalSigns = leftSigns + rightSigns;
+
+        int upLeftSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 7)[0];
+        int downRightSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 3)[0];
+        int backSlashSigns = upLeftSigns + downRightSigns;
+
+        int upRightSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 1)[0];
+        int downLeftSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 5)[0];
+        int SlashSigns = upRightSigns + downLeftSigns;
+
+        if(verticalSigns > playerCounter){
+            playerCounter = verticalSigns;
+        }
+        if (horizontalSigns > playerCounter){
+            playerCounter = horizontalSigns;
+        }
+        if (backSlashSigns > playerCounter){
+            playerCounter = backSlashSigns;
+        }
+        if (SlashSigns > playerCounter){
+            playerCounter = SlashSigns;
+        }
+        return playerCounter;
+    }
 
     public void mark(int player, int row, int col) {
         int Counter = 0;
