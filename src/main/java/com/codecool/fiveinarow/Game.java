@@ -1,5 +1,6 @@
 package com.codecool.fiveinarow;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -101,7 +102,36 @@ public class Game implements GameInterface {
         return coordinates;
     }
 
-    public String aiDecision(){
+    public int[] aiEasyWin(int player, int howMany){
+        int[] move = new int[3];
+        int counter = 0;
+        int[] results = new int[3];
+        int playerCounter = 0;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if (player == cell) {
+                    for (int j = 0; j < 8; j++) {
+                        results = checkDirection(player, howMany, counter, counter2, playerCounter, j);
+                        if (results[0] == howMany - 1) {
+                            System.out.println("AIEasyWin if");
+                            move[0] = 1;
+                            move[1] = results[1];
+                            move[2] = results[2];
+                            System.out.println("Row: " + move[1]);
+                            System.out.println("Col: " + move[2]);
+                            return move;
+                        }
+                    }
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        return move;
+    }
+
+    public String aiRandom(){
         char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
                 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         String move="";
@@ -113,39 +143,61 @@ public class Game implements GameInterface {
         int randColInt = rand.nextInt(board[0].length-1);
         randColString = String.valueOf(randColInt);
         move = randRowString + randColString;
-        return move;
-    }
 
-    public int[] getAiMove(int player) {
         boolean valid = false;
-        String move;
-        System.out.println("Enter your move player " + player + ": ");
-        move = aiDecision(); // AI input pl. A4
         while (!valid) {
             for (String[] row : moveList) {
-                for (String cell : row) {
-                    if (cell.equals(move)) {
-                        valid = true;
+                if (!valid) {
+                    for (String cell : row) {
+                        if (cell.equals(move) && !cell.equals("---")) {
+                            valid = true;
+                        }
                     }
                 }
             }
             if (!valid) {
-                move = aiDecision(); // AI input pl. A5
+                move = aiRandom(); // AI input pl. A5
+                break;
             }
         }
-        int[] coordinates = {0, 0};
+        System.out.println("Random move: " + move);
+        return move;
+    }
+
+    public String aiTransformCoordinates(int row, int col) {
+        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+        String move = "";
+        move = abc[row] + String.valueOf(col);
+        return move;
+    }
+
+    public int[] getAiMove(int player, int howMany) {
+        String move;
+        System.out.println("Enter your move player " + player + ": ");
+        if (aiEasyWin(player, howMany)[0] == 1) {
+            move = aiTransformCoordinates(aiEasyWin(player, howMany)[1], aiEasyWin(player, howMany)[2] + 1);
+            System.out.println(move);
+        }
+        else {
+            move = aiRandom(); // AI input pl. A4
+        }
+        int[] coordinates = new int[2];
         int Counter = 0;
         for (String[] row : moveList) {
             int Counter2 = 0;
             for (String cell : row) {
                 if (cell.equals(move)) {
+                    System.out.println("Filled cell: " + cell);
                     moveList[Counter][Counter2] = "---";
-                    coordinates = new int[] {Counter, Counter2};
+                    coordinates[0] = Counter;
+                    coordinates[1] = Counter2;
                 }
                 Counter2++;
             }
             Counter++;
         }
+        System.out.println("Coordinates: " + Arrays.toString(coordinates));
         return coordinates;
     }
 
@@ -188,114 +240,114 @@ public class Game implements GameInterface {
     private int[] checkDirection(int player, int lineLength, int row, int col, int playerCounter, int direction){
         // direction= 0:up, 1:up-right, 2:right, 3:down-right, 4:down, 5:down-left, 6:left, 7:up-left
         // checkResult= 0:playerCounter, 1:row, 2:col, 3:direction as int
-        int[] checkResult = new int[] {0, -1, -1, direction};
-            for (int i = 0; i > (lineLength * (-1)); i--) {
-                if (direction == 0) {
-                    if (row + i >= 0) {
-                        if (board[row + i][col] == player) {
-                            playerCounter++;
-                        }
-                        if (playerCounter == lineLength - 1 && board[row + i][col] == 0) {
-                            checkResult[1] = row + i;
-                            checkResult[2] = col;
-                        }
+        int[] checkResult = new int[3];
+        for (int i = 0; i > (lineLength * (-1)); i--) {
+            if (direction == 0) {
+                if (row + i >= 0) {
+                    if (board[row + i][col] == player) {
+                        playerCounter++;
                     }
-                } else if (direction == 1) {
-                    if (row + i >= 0 && (col + i * (-1)) < board[0].length) {
-                        if (board[row + i][col + i * (-1)] == player) {
-                            playerCounter++;
-                        }
-                        if (playerCounter == lineLength - 1 && board[row + i][col + i * (-1)] == 0) {
-                            checkResult[1] = row + i;
-                            checkResult[2] = col + i * (-1);
-                        }
+                    if (playerCounter == lineLength - 1 && board[row + i][col] == 0) {
+                        checkResult[1] = row + i;
+                        checkResult[2] = col;
                     }
-                } else if (direction == 2) {
-                    if (col - i < board[0].length) {
-                        if (board[row][col - i] == player) {
-                            playerCounter++;
-                        }
-                        if (playerCounter == lineLength - 1 && board[row][col - i] == 0) {
-                            checkResult[1] = row;
-                            checkResult[2] = col - i;
-                        }
+                }
+            } else if (direction == 1) {
+                if (row + i >= 0 && (col + i * (-1)) < board[0].length) {
+                    if (board[row + i][col + i * (-1)] == player) {
+                        playerCounter++;
                     }
-                } else if (direction == 3) {
-                    if (row - i < board.length && col - i < board[0].length) {
-                        if (board[row - i][col - i] == player) {
-                            playerCounter++;
-                        }
-                        if (playerCounter == lineLength - 1 && board[row - i][col - i] == 0) {
-                            checkResult[1] = row - i;
-                            checkResult[2] = col - i;
-                        }
+                    if (playerCounter == lineLength - 1 && board[row + i][col + i * (-1)] == 0) {
+                        checkResult[1] = row + i;
+                        checkResult[2] = col + i * (-1);
                     }
-                } else if (direction == 4) {
-                    if (row - i < board.length) {
-                        if (board[row - i][col] == player) {
-                            playerCounter++;
-                        }
-                        if (playerCounter == lineLength - 1 && board[row - i][col] == 0) {
-                            checkResult[1] = row - i;
-                            checkResult[2] = col;
-                        }
+                }
+            } else if (direction == 2) {
+                if (col - i < board[0].length) {
+                    if (board[row][col - i] == player) {
+                        playerCounter++;
                     }
-                } else if (direction == 5) {
-                    if(row + i * (-1) < board.length && col + i >= 0){
-                        if (board[row + i * (-1)][col + i] == player) {
-                            playerCounter++;
-                        }
-                        if (playerCounter == lineLength - 1 && board[row + i * (-1)][col + i] == 0) {
-                            checkResult[1] = row + i * (-1);
-                            checkResult[2] = col + i;
-                        }
+                    if (playerCounter == lineLength - 1 && board[row][col - i] == 0) {
+                        checkResult[1] = row;
+                        checkResult[2] = col - i;
                     }
-                } else if (direction == 6) {
-                    if(col + i >= 0){
-                        if (board[row][col + i] == player) {
-                            playerCounter++;
-                        }
-                        if (playerCounter == lineLength - 1 && board[row][col + i] == 0) {
-                            checkResult[1] = row;
-                            checkResult[2] = col + i;
-                        }
+                }
+            } else if (direction == 3) {
+                if (row - i < board.length && col - i < board[0].length) {
+                    if (board[row - i][col - i] == player) {
+                        playerCounter++;
                     }
-                } else if (direction == 7) {
-                    if(row + i >= 0 && col + i >= 0){
-                        if (board[row + i][col + i] == player) {
-                            playerCounter++;
-                        }
-                        if (playerCounter == lineLength - 1 && board[row + i][col + i] == 0) {
-                            checkResult[1] = row + i;
-                            checkResult[2] = col + i;
-                        }
+                    if (playerCounter == lineLength - 1 && board[row - i][col - i] == 0) {
+                        checkResult[1] = row - i;
+                        checkResult[2] = col - i;
+                    }
+                }
+            } else if (direction == 4) {
+                if (row - i < board.length) {
+                    if (board[row - i][col] == player) {
+                        playerCounter++;
+                    }
+                    if (playerCounter == lineLength - 1 && board[row - i][col] == 0) {
+                        checkResult[1] = row - i;
+                        checkResult[2] = col;
+                    }
+                }
+            } else if (direction == 5) {
+                if(row + i * (-1) < board.length && col + i >= 0){
+                    if (board[row + i * (-1)][col + i] == player) {
+                        playerCounter++;
+                    }
+                    if (playerCounter == lineLength - 1 && board[row + i * (-1)][col + i] == 0) {
+                        checkResult[1] = row + i * (-1);
+                        checkResult[2] = col + i;
+                    }
+                }
+            } else if (direction == 6) {
+                if(col + i >= 0){
+                    if (board[row][col + i] == player) {
+                        playerCounter++;
+                    }
+                    if (playerCounter == lineLength - 1 && board[row][col + i] == 0) {
+                        checkResult[1] = row;
+                        checkResult[2] = col + i;
+                    }
+                }
+            } else if (direction == 7) {
+                if(row + i >= 0 && col + i >= 0){
+                    if (board[row + i][col + i] == player) {
+                        playerCounter++;
+                    }
+                    if (playerCounter == lineLength - 1 && board[row + i][col + i] == 0) {
+                        checkResult[1] = row + i;
+                        checkResult[2] = col + i;
                     }
                 }
             }
+        }
         checkResult[0] = playerCounter;
         return checkResult;
     }
 
     public boolean hasWon(int player, int howMany) {
         boolean result = false;
-            int counter = 0;
-            int playerCounter = 0;
-            for (int[] row : board) {
-                int counter2 = 0;
-                for (int cell : row) {
-                    if (player == cell) {
-                        for(int j=0; j<8; j++) { // check the lines all 8 different directions
-                            playerCounter = checkDirection(player, howMany, counter, counter2, playerCounter, j)[0];
-                            if (playerCounter == howMany) {
-                                result = true;
-                            }
-                            playerCounter = 0;
+        int counter = 0;
+        int playerCounter = 0;
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                if (player == cell) {
+                    for(int j=0; j<8; j++) { // check the lines all 8 different directions
+                        playerCounter = checkDirection(player, howMany, counter, counter2, playerCounter, j)[0];
+                        if (playerCounter == howMany) {
+                            result = true;
                         }
+                        playerCounter = 0;
                     }
-                    counter2++;
                 }
-                counter++;
+                counter2++;
             }
+            counter++;
+        }
         if(result){
             return true;
         }
@@ -364,13 +416,13 @@ public class Game implements GameInterface {
         }
     }
 
-    public int[] enableAi(int player) {
+    public int[] enableAi(int player, int howMany) {
         try{
             Thread.sleep(1000);
         } catch (InterruptedException ie){
             Thread.currentThread().interrupt();
         }
-        int[] coordinates = getAiMove(player);
+        int[] coordinates = getAiMove(player, howMany);
         return coordinates;
     }
 
@@ -382,7 +434,7 @@ public class Game implements GameInterface {
         while (!isFull() || !hasWon(currentPlayer, howMany)) {
             int[] actualCoordinate;
             if (currentPlayer == AIPlayer) {
-                actualCoordinate = enableAi(currentPlayer);
+                actualCoordinate = enableAi(currentPlayer, howMany);
             } else {
                 actualCoordinate = getMove(currentPlayer);
             }
