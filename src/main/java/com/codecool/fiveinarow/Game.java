@@ -1,6 +1,5 @@
 package com.codecool.fiveinarow;
 
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -61,7 +60,7 @@ public class Game implements GameInterface {
         String move;
         System.out.println("Enter your move player " + player + ": ");
         move = myObj.nextLine();
-
+        System.out.println();
         while (!valid) {
             for (String[] row : moveList) {
                 for (String cell : row) {
@@ -150,6 +149,28 @@ public class Game implements GameInterface {
         return coordinates;
     }
 
+//    public int[] checkMiddleCell(int player, int lineLength, int rowToCheck, int colToCheck){
+//        int[] resultList = new int[] {0, -1, -1, -1};
+//        int distance= (lineLength/2)+1;
+//        int counter = 0;
+//        int playerCounter = 0;
+//
+//        int upSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 0)[0];
+//        int downSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 4)[0];
+//        int verticalSigns = upSigns + downSigns;
+//
+//        int leftSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 6)[0];
+//        int rightSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 2)[0];
+//        int horizontalSigns = leftSigns + rightSigns;
+//
+//        int upLeftSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 7)[0];
+//        int downRightSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 3)[0];
+//        int backSlashSigns = upLeftSigns + downRightSigns;
+//
+//
+//        return resultList;
+//    }
+
     public void mark(int player, int row, int col) {
         int Counter = 0;
         for (int[] actualRow : board) {
@@ -164,263 +185,118 @@ public class Game implements GameInterface {
         }
     }
 
-    private boolean checkUp(int player, int howMany) {
-        int counter = 0;
-        int playerCounter = 0;
-        boolean result = false;
-        for (int[] row : board) {
-            int counter2 = 0;
-            for (int cell : row) {
-                if(player == cell){
-                    for(int i=0; i > (howMany*(-1)); i--){
-                        if(counter+i >= 0){
-                            if(board[counter+i][counter2] == player){
-                                playerCounter++;
-                            }
+    private int[] checkDirection(int player, int lineLength, int row, int col, int playerCounter, int direction){
+        // direction= 0:up, 1:up-right, 2:right, 3:down-right, 4:down, 5:down-left, 6:left, 7:up-left
+        // checkResult= 0:playerCounter, 1:row, 2:col, 3:direction as int
+        int[] checkResult = new int[] {0, -1, -1, direction};
+            for (int i = 0; i > (lineLength * (-1)); i--) {
+                if (direction == 0) {
+                    if (row + i >= 0) {
+                        if (board[row + i][col] == player) {
+                            playerCounter++;
+                        }
+                        if (playerCounter == lineLength - 1 && board[row + i][col] == 0) {
+                            checkResult[1] = row + i;
+                            checkResult[2] = col;
                         }
                     }
-                    if(playerCounter == howMany){
-                        result = true;
-                    }
-                    playerCounter = 0;
-                }
-                counter2++;
-            }
-            counter++;
-        }
-        if(result){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkUpRight(int player, int howMany) {
-        int counter = 0;
-        int playerCounter = 0;
-        boolean result = false;
-        for (int[] row : board) {
-            int counter2 = 0;
-            for (int cell : row) {
-                if(player == cell) {
-                    for (int i = 0; i > (howMany * (-1)); i--) {
-                        if(counter + i >= 0 && (counter2 + i * (-1)) < board[0].length){
-                            if (board[counter + i][counter2 + i * (-1)] == player) {
-                                playerCounter++;
-                            }
+                } else if (direction == 1) {
+                    if (row + i >= 0 && (col + i * (-1)) < board[0].length) {
+                        if (board[row + i][col + i * (-1)] == player) {
+                            playerCounter++;
+                        }
+                        if (playerCounter == lineLength - 1 && board[row + i][col + i * (-1)] == 0) {
+                            checkResult[1] = row + i;
+                            checkResult[2] = col + i * (-1);
                         }
                     }
-                    if(playerCounter == howMany){
-                        result = true;
-                    }
-                    playerCounter = 0;
-                }
-                counter2++;
-            }
-            counter++;
-        }
-        if(result){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkUpLeft(int player, int howMany) {
-        int counter = 0;
-        int playerCounter = 0;
-        boolean result = false;
-        for (int[] row : board) {
-            int counter2 = 0;
-            for (int cell : row) {
-                if (player == cell) {
-                    for (int i = 0; i > (howMany * (-1)); i--) {
-                        if(counter + i >= 0 && counter2 + i >= 0){
-                            if (board[counter + i][counter2 + i] == player) {
-                                playerCounter++;
-                            }
+                } else if (direction == 2) {
+                    if (col - i < board[0].length) {
+                        if (board[row][col - i] == player) {
+                            playerCounter++;
                         }
-
-                    }
-                    if(playerCounter == howMany){
-                        result = true;
-                    }
-                    playerCounter = 0;
-                }
-                counter2++;
-            }
-            counter++;
-        }
-        if(result){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkRight(int player, int howMany) {
-        int counter = 0;
-        int playerCounter = 0;
-        boolean result = false;
-        for (int[] row : board) {
-            int counter2 = 0;
-            for (int cell : row) {
-                if (player == cell) {
-                    for (int i = 0; i < howMany; i++) {
-                        if(counter2 + i < board[0].length){
-                            if (board[counter][counter2 + i] == player) {
-                                playerCounter++;
-                            }
+                        if (playerCounter == lineLength - 1 && board[row][col - i] == 0) {
+                            checkResult[1] = row;
+                            checkResult[2] = col - i;
                         }
                     }
-                    if(playerCounter == howMany){
-                        result = true;
-                    }
-                    playerCounter = 0;
-                }
-                counter2++;
-            }
-            counter++;
-        }
-        if(result){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkDownRight(int player, int howMany) {
-        int counter = 0;
-        int playerCounter = 0;
-        boolean result = false;
-        for (int[] row : board) {
-            int counter2 = 0;
-            for (int cell : row) {
-                if (player == cell) {
-                    for (int i = 0; i < howMany; i++) {
-                        if(counter + i < board.length && counter2 + i < board[0].length){
-                            if (board[counter + i][counter2 + i] == player) {
-                                playerCounter++;
-                            }
+                } else if (direction == 3) {
+                    if (row - i < board.length && col - i < board[0].length) {
+                        if (board[row - i][col - i] == player) {
+                            playerCounter++;
+                        }
+                        if (playerCounter == lineLength - 1 && board[row - i][col - i] == 0) {
+                            checkResult[1] = row - i;
+                            checkResult[2] = col - i;
                         }
                     }
-                    if(playerCounter == howMany){
-                        result = true;
-                    }
-                    playerCounter = 0;
-                }
-                counter2++;
-            }
-            counter++;
-        }
-        if(result){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkDown(int player, int howMany) {
-        int counter = 0;
-        int playerCounter = 0;
-        boolean result = false;
-        for (int[] row : board) {
-            int counter2 = 0;
-            for (int cell : row) {
-                if (player == cell) {
-                    for (int i = 0; i < howMany; i++) {
-                        if(counter + i < board.length){
-                            if (board[counter + i][counter2] == player) {
-                                playerCounter++;
-                            }
+                } else if (direction == 4) {
+                    if (row - i < board.length) {
+                        if (board[row - i][col] == player) {
+                            playerCounter++;
+                        }
+                        if (playerCounter == lineLength - 1 && board[row - i][col] == 0) {
+                            checkResult[1] = row - i;
+                            checkResult[2] = col;
                         }
                     }
-                    if(playerCounter == howMany){
-                        result = true;
-                    }
-                    playerCounter = 0;
-                }
-                counter2++;
-            }
-            counter++;
-        }
-        if(result){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkDownLeft(int player, int howMany) {
-        int counter = 0;
-        int playerCounter = 0;
-        boolean result = false;
-        for (int[] row : board) {
-            int counter2 = 0;
-            for (int cell : row) {
-                if (player == cell) {
-                    for (int i = 0; i > (howMany * (-1)); i--) {
-                        if(counter + i * (-1) < board.length && counter2 + i >= 0){
-                            if (board[counter + i * (-1)][counter2 + i] == player) {
-                                playerCounter++;
-                            }
+                } else if (direction == 5) {
+                    if(row + i * (-1) < board.length && col + i >= 0){
+                        if (board[row + i * (-1)][col + i] == player) {
+                            playerCounter++;
+                        }
+                        if (playerCounter == lineLength - 1 && board[row + i * (-1)][col + i] == 0) {
+                            checkResult[1] = row + i * (-1);
+                            checkResult[2] = col + i;
                         }
                     }
-                    if(playerCounter == howMany){
-                        result = true;
-                    }
-                    playerCounter = 0;
-                }
-                counter2++;
-            }
-            counter++;
-        }
-        if(result){
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkLeft(int player, int howMany) {
-        int counter = 0;
-        int playerCounter = 0;
-        boolean result = false;
-        for (int[] row : board) {
-            int counter2 = 0;
-            for (int cell : row) {
-                if (player == cell) {
-                    for (int i = 0; i > (howMany * (-1)); i--) {
-                        if(counter2 + i >= 0){
-                            if (board[counter][counter2 + i] == player) {
-                                playerCounter++;
-                            }
+                } else if (direction == 6) {
+                    if(col + i >= 0){
+                        if (board[row][col + i] == player) {
+                            playerCounter++;
+                        }
+                        if (playerCounter == lineLength - 1 && board[row][col + i] == 0) {
+                            checkResult[1] = row;
+                            checkResult[2] = col + i;
                         }
                     }
-                    if(playerCounter == howMany){
-                        result = true;
+                } else if (direction == 7) {
+                    if(row + i >= 0 && col + i >= 0){
+                        if (board[row + i][col + i] == player) {
+                            playerCounter++;
+                        }
+                        if (playerCounter == lineLength - 1 && board[row + i][col + i] == 0) {
+                            checkResult[1] = row + i;
+                            checkResult[2] = col + i;
+                        }
                     }
-                    playerCounter = 0;
                 }
-                counter2++;
             }
-            counter++;
-        }
-        if(result){
-            return true;
-        }
-        return false;
+        checkResult[0] = playerCounter;
+        return checkResult;
     }
 
     public boolean hasWon(int player, int howMany) {
-        if(checkUp(player, howMany)){
-            return true;
-        } else if (checkUpRight(player, howMany)){
-            return true;
-        } else if (checkUpLeft(player, howMany)){
-            return true;
-        } else if (checkRight(player, howMany)){
-            return true;
-        } else if (checkDownRight(player, howMany)){
-            return true;
-        } else if (checkDown(player, howMany)){
-            return true;
-        } else if (checkDownLeft(player, howMany)){
-            return true;
-        } else if (checkLeft(player, howMany)){
+        boolean result = false;
+            int counter = 0;
+            int playerCounter = 0;
+            for (int[] row : board) {
+                int counter2 = 0;
+                for (int cell : row) {
+                    if (player == cell) {
+                        for(int j=0; j<8; j++) { // check the lines all 8 different directions
+                            playerCounter = checkDirection(player, howMany, counter, counter2, playerCounter, j)[0];
+                            if (playerCounter == howMany) {
+                                result = true;
+                            }
+                            playerCounter = 0;
+                        }
+                    }
+                    counter2++;
+                }
+                counter++;
+            }
+        if(result){
             return true;
         }
         return false;
