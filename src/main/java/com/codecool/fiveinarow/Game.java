@@ -193,6 +193,37 @@ public class Game implements GameInterface {
         return move;
     }
 
+    public int[] aiNearPlayer(int player){
+        int[] move = new int[3];
+        int counter = 0;
+        int[] results = new int[3];
+        int playerCounter = 0;
+        if(player == 1){
+            player = 2;
+        } else if (player == 2){
+            player = 1;
+        }
+        for (int[] row : board) {
+            int counter2 = 0;
+            for (int cell : row) {
+                for (int j = 0; j < 8; j++) {
+                    results = checkDirection(player, 2, counter, counter2, playerCounter, j);
+                    if ( results[0] == 1 && board[counter][counter2] == 0) {
+                        move[0] = 1;
+                        move[1] = counter;
+                        move[2] = counter2;
+                        return move;
+                    }
+                    playerCounter = 0;
+                }
+                counter2++;
+            }
+            counter++;
+        }
+        return move;
+    }
+
+
     public int[] getAiMove(int player, int howMany) {
         String move;
         System.out.println("Enter your move player " + player + ": ");
@@ -200,6 +231,8 @@ public class Game implements GameInterface {
             move = aiTransformCoordinates(aiEasyWin(player, howMany)[1], aiEasyWin(player, howMany)[2]);
         } else if (aiPreventLose(player, howMany, 2)[0] == 1){
             move = aiTransformCoordinates(aiPreventLose(player, howMany, 2)[1], aiPreventLose(player, howMany, 2)[2]);
+        } else if (aiNearPlayer(player)[0] == 1){
+            move = aiTransformCoordinates(aiNearPlayer(player)[1], aiNearPlayer(player)[2]);
         }
         else {
             move = aiRandom();
