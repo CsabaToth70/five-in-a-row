@@ -127,6 +127,36 @@ public class Game implements GameInterface {
         return move;
     }
 
+    public int[] aiExpandMoves(int player, int howMany){
+        int[] move = new int[3];
+        int[] results;
+        int playerCounter = 0;
+        for (int a=howMany-1; a>0; a--) {
+            int counter = 0;
+            for (int[] row : board) {
+                int counter2 = 0;
+                for (int cell : row) {
+                    for (int j = 0; j < 8; j++) {
+                        results = checkDirection(player, a, counter, counter2, playerCounter, j);
+                        if (board[counter][counter2] == 0 && results[0] == a-1) {
+                            move[0] = 1;
+                            move[1] = counter;
+                            move[2] = counter2;
+                            return move;
+                        }
+                        else {
+                            move[0] = 2;
+                        }
+                        playerCounter = 0;
+                    }
+                    counter2++;
+                }
+                counter++;
+            }
+        }
+        return move;
+    }
+
     public String aiRandom(){
         char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
                 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
@@ -152,6 +182,7 @@ public class Game implements GameInterface {
         }
         int randIndex = rand.nextInt(actualArrayLength);
         move = remainedPlaces[randIndex];
+        System.out.println("This was a random move.");
         return move;
     }
 
@@ -168,6 +199,9 @@ public class Game implements GameInterface {
         System.out.println("Enter your move player " + player + ": ");
         if (aiEasyWin(player, howMany)[0] == 1) {
             move = aiTransformCoordinates(aiEasyWin(player, howMany)[1], aiEasyWin(player, howMany)[2]);
+        }
+        else if (aiExpandMoves(player, howMany)[0] == 1){
+            move = aiTransformCoordinates(aiExpandMoves(player, howMany)[1], aiExpandMoves(player, howMany)[2]);
         }
         else {
             move = aiRandom();
