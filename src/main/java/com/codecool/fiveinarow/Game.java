@@ -541,12 +541,44 @@ public class Game implements GameInterface {
 
     public void play(int howMany) {
         moveBoard();
+        int AIPlayer = 0;
+        int AIPlayer2 = 0;
+        System.out.println("Welcome to Five-In-A_Row!");
+        System.out.println("Press 1 to play PvP mode");
+        System.out.println("Press 2 to play PvAI mode");
+        System.out.println("Press 3 to play AIvAI mode");
+        boolean valid = false;
+        while (!valid) {
+            Scanner myObj = new Scanner(System.in);
+            String choice;
+            choice = myObj.nextLine();
+            switch (choice) {
+                case "1":
+                    AIPlayer = 0;
+                    AIPlayer2 = 0;
+                    valid = true;
+                    break;
+                case "2":
+                    AIPlayer = 1;
+                    AIPlayer2 = 0;
+                    valid = true;
+                    break;
+                case "3":
+                    AIPlayer = 1;
+                    AIPlayer2 = 2;
+                    valid = true;
+                    break;
+                default:
+                    System.out.println("Invalid input. Please enter a number between 1 and 3.");
+                    valid = false;
+                    break;
+            }
+        }
         int currentPlayer = 1;
-        int AIPlayer = 1;
         printBoard();
         while (!isFull() || !hasWon(currentPlayer, howMany)) {
             int[] actualCoordinate;
-            if (currentPlayer == AIPlayer) {
+            if (currentPlayer == AIPlayer || currentPlayer == AIPlayer2) {
                 actualCoordinate = enableAi(currentPlayer, howMany);
             } else {
                 actualCoordinate = getMove(currentPlayer);
