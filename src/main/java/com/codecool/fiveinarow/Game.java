@@ -138,7 +138,7 @@ public class Game implements GameInterface {
                 for (int cell : row) {
                     for (int j = 0; j < 8; j++) {
                         results = checkDirection(player, a, counter, counter2, playerCounter, j);
-                        if (board[counter][counter2] == 0 && results[0] == a-1) {
+                        if (board[counter][counter2] == 0 && results[0] == a-1 && results[0] != 0) {
                             move[0] = 1;
                             move[1] = counter;
                             move[2] = counter2;
@@ -182,7 +182,6 @@ public class Game implements GameInterface {
         }
         int randIndex = rand.nextInt(actualArrayLength);
         move = remainedPlaces[randIndex];
-        System.out.println("This was a random move.");
         return move;
     }
 
@@ -262,13 +261,11 @@ public class Game implements GameInterface {
             move = aiTransformCoordinates(aiEasyWin(player, howMany)[1], aiEasyWin(player, howMany)[2]);
         } else if (aiPreventLose(player, howMany, 2)[0] == 1){
             move = aiTransformCoordinates(aiPreventLose(player, howMany, 2)[1], aiPreventLose(player, howMany, 2)[2]);
+        } else if (aiExpandMoves(player, howMany)[0] == 1){
+            move = aiTransformCoordinates(aiExpandMoves(player, howMany)[1], aiExpandMoves(player, howMany)[2]);
         } else if (aiNearPlayer(player)[0] == 1){
             move = aiTransformCoordinates(aiNearPlayer(player)[1], aiNearPlayer(player)[2]);
-        }
-        else if (aiExpandMoves(player, howMany)[0] == 1){
-            move = aiTransformCoordinates(aiExpandMoves(player, howMany)[1], aiExpandMoves(player, howMany)[2]);
-        }
-        else {
+        } else {
             move = aiRandom();
         }
         int[] coordinates = new int[2];
