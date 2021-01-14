@@ -130,32 +130,28 @@ public class Game implements GameInterface {
     public String aiRandom(){
         char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
                 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+        int actualArrayLength = 0;
         String move="";
         Random rand = new Random();
-        char randRowString = ' ';
-        String randColString = "";
-        int randRowInt = rand.nextInt(board.length-1);
-        randRowString = abc[randRowInt];
-        int randColInt = rand.nextInt(board[0].length-1);
-        randColString = String.valueOf(randColInt);
-        move = randRowString + randColString;
-
-        boolean valid = false;
-        while (!valid) {
-            for (String[] row : moveList) {
-                if (!valid) {
-                    for (String cell : row) {
-                        if (cell.equals(move) && !cell.equals("---")) {
-                            valid = true;
-                        }
+        for (String[] row : moveList) {
+                for (String cell : row) {
+                    if (!cell.equals("---")) {
+                        actualArrayLength++;
                     }
                 }
             }
-            if (!valid) {
-                move = aiRandom(); // AI input pl. A5
-                break;
+        int index =0;
+        String[] remainedPlaces = new String[actualArrayLength];
+        for (String[] row : moveList) {
+            for (String cell : row) {
+                if (!cell.equals("---")) {
+                    remainedPlaces[index] = cell;
+                    index++;
+                }
             }
         }
+        int randIndex = rand.nextInt(actualArrayLength);
+        move = remainedPlaces[randIndex];
         return move;
     }
 
