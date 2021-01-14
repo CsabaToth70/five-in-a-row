@@ -118,6 +118,13 @@ public class Game implements GameInterface {
                         move[2] = counter2;
                         return move;
                     }
+                    playerCounter = checkMiddleCell(player, howMany, counter, counter2);
+                    if ( playerCounter == howMany - 1 && board[counter][counter2] == 0) {
+                        move[0] = 1;
+                        move[1] = counter;
+                        move[2] = counter2;
+                        return move;
+                    }
                     playerCounter = 0;
                 }
                 counter2++;
@@ -144,8 +151,12 @@ public class Game implements GameInterface {
                             move[2] = counter2;
                             return move;
                         }
-                        else {
-                            move[0] = 2;
+                        playerCounter = checkMiddleCell(player, a, counter, counter2);
+                        if ( playerCounter == a - 1 && board[counter][counter2] == 0 && playerCounter !=0 ) {
+                            move[0] = 1;
+                            move[1] = counter;
+                            move[2] = counter2;
+                            return move;
                         }
                         playerCounter = 0;
                     }
@@ -158,8 +169,6 @@ public class Game implements GameInterface {
     }
 
     public String aiRandom(){
-        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         int actualArrayLength = 0;
         String move="";
         Random rand = new Random();
@@ -207,8 +216,15 @@ public class Game implements GameInterface {
             int counter2 = 0;
             for (int cell : row) {
                 for (int j = 0; j < 8; j++) {
-                    results = checkDirection(player, howMany - defenseDistance +1, counter, counter2, playerCounter, j);
+                    results = checkDirection(player, howMany - defenseDistance + 1, counter, counter2, playerCounter, j);
                     if ( results[0] == howMany - defenseDistance && board[counter][counter2] == 0) {
+                        move[0] = 1;
+                        move[1] = counter;
+                        move[2] = counter2;
+                        return move;
+                    }
+                    playerCounter = checkMiddleCell(player, howMany - defenseDistance + 1, counter, counter2);
+                    if ( playerCounter == howMany - defenseDistance && board[counter][counter2] == 0) {
                         move[0] = 1;
                         move[1] = counter;
                         move[2] = counter2;
