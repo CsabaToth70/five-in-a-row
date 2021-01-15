@@ -8,6 +8,8 @@ public class Game implements GameInterface {
 
     private int[][] board;
     private String[][] moveList;
+    private char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+            'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
     public Game(int nRows, int nCols) {
         int[][] board = new int[nRows][nCols];
@@ -24,8 +26,6 @@ public class Game implements GameInterface {
     }
 
     public void moveBoard() {
-        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         String[][] moveList = new String[board.length][board[0].length];
         int Counter1 = 0;
         for (String[] row : moveList) {
@@ -195,8 +195,6 @@ public class Game implements GameInterface {
     }
 
     public String aiTransformCoordinates(int row, int col) {
-        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         String move = "";
         move = abc[row] + String.valueOf(col+1);
         return move;
@@ -364,6 +362,19 @@ public class Game implements GameInterface {
         }
     }
 
+    private int[] getOccupiedPlaces(int player, int lineLength, int nextRow, int nextCol, int playerCounter){
+        int[] occupied = new int[3];
+        if (board[nextRow][nextCol] == player) {
+            playerCounter++;
+        }
+        if (playerCounter == lineLength - 1 && board[nextRow][nextCol] == 0) {
+            occupied[1] = nextRow;
+            occupied[2] = nextCol;
+        }
+        occupied[0] = playerCounter;
+        return occupied;
+    }
+
     private int[] checkDirection(int player, int lineLength, int row, int col, int playerCounter, int direction){
         // direction= 0:up, 1:up-right, 2:right, 3:down-right, 4:down, 5:down-left, 6:left, 7:up-left
         // checkResult= 0:playerCounter, 1:row, 2:col
@@ -371,83 +382,43 @@ public class Game implements GameInterface {
         for (int i = 0; i > (lineLength * (-1)); i--) {
             if (direction == 0) {
                 if (row + i >= 0) {
-                    if (board[row + i][col] == player) {
-                        playerCounter++;
-                    }
-                    if (playerCounter == lineLength - 1 && board[row + i][col] == 0) {
-                        checkResult[1] = row + i;
-                        checkResult[2] = col;
-                    }
+                    checkResult = getOccupiedPlaces(player, lineLength, row + i, col, playerCounter);
+                    playerCounter = checkResult[0];
                 }
             } else if (direction == 1) {
                 if (row + i >= 0 && (col + i * (-1)) < board[0].length) {
-                    if (board[row + i][col + i * (-1)] == player) {
-                        playerCounter++;
-                    }
-                    if (playerCounter == lineLength - 1 && board[row + i][col + i * (-1)] == 0) {
-                        checkResult[1] = row + i;
-                        checkResult[2] = col + i * (-1);
-                    }
+                    checkResult = getOccupiedPlaces(player, lineLength, row + i, col + i * (-1), playerCounter);
+                    playerCounter = checkResult[0];
                 }
             } else if (direction == 2) {
                 if (col - i < board[0].length) {
-                    if (board[row][col - i] == player) {
-                        playerCounter++;
-                    }
-                    if (playerCounter == lineLength - 1 && board[row][col - i] == 0) {
-                        checkResult[1] = row;
-                        checkResult[2] = col - i;
-                    }
+                    checkResult = getOccupiedPlaces(player, lineLength, row, col - i, playerCounter);
+                    playerCounter = checkResult[0];
                 }
             } else if (direction == 3) {
                 if (row - i < board.length && col - i < board[0].length) {
-                    if (board[row - i][col - i] == player) {
-                        playerCounter++;
-                    }
-                    if (playerCounter == lineLength - 1 && board[row - i][col - i] == 0) {
-                        checkResult[1] = row - i;
-                        checkResult[2] = col - i;
-                    }
+                    checkResult = getOccupiedPlaces(player, lineLength, row - i, col - i, playerCounter);
+                    playerCounter = checkResult[0];
                 }
             } else if (direction == 4) {
                 if (row - i < board.length) {
-                    if (board[row - i][col] == player) {
-                        playerCounter++;
-                    }
-                    if (playerCounter == lineLength - 1 && board[row - i][col] == 0) {
-                        checkResult[1] = row - i;
-                        checkResult[2] = col;
-                    }
+                    checkResult = getOccupiedPlaces(player, lineLength, row - i, col, playerCounter);
+                    playerCounter = checkResult[0];
                 }
             } else if (direction == 5) {
                 if(row + i * (-1) < board.length && col + i >= 0){
-                    if (board[row + i * (-1)][col + i] == player) {
-                        playerCounter++;
-                    }
-                    if (playerCounter == lineLength - 1 && board[row + i * (-1)][col + i] == 0) {
-                        checkResult[1] = row + i * (-1);
-                        checkResult[2] = col + i;
-                    }
+                    checkResult = getOccupiedPlaces(player, lineLength, row + i * (-1), col + i, playerCounter);
+                    playerCounter = checkResult[0];
                 }
             } else if (direction == 6) {
                 if(col + i >= 0){
-                    if (board[row][col + i] == player) {
-                        playerCounter++;
-                    }
-                    if (playerCounter == lineLength - 1 && board[row][col + i] == 0) {
-                        checkResult[1] = row;
-                        checkResult[2] = col + i;
-                    }
+                    checkResult = getOccupiedPlaces(player, lineLength, row, col + i, playerCounter);
+                    playerCounter = checkResult[0];
                 }
             } else if (direction == 7) {
                 if(row + i >= 0 && col + i >= 0){
-                    if (board[row + i][col + i] == player) {
-                        playerCounter++;
-                    }
-                    if (playerCounter == lineLength - 1 && board[row + i][col + i] == 0) {
-                        checkResult[1] = row + i;
-                        checkResult[2] = col + i;
-                    }
+                    checkResult = getOccupiedPlaces(player, lineLength, row + i, col + i, playerCounter);
+                    playerCounter = checkResult[0];
                 }
             }
         }
@@ -501,8 +472,6 @@ public class Game implements GameInterface {
     }
 
     public void printBoard() {
-        char[] abc = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-                'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         String header = " ";
         for (int i=0; i<= board.length; i++){
             if(i==0){
