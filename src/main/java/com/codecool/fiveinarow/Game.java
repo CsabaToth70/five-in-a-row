@@ -216,15 +216,23 @@ public class Game implements GameInterface {
             int counter2 = 0;
             for (int cell : row) {
                 for (int j = 0; j < 8; j++) {
-                    results = checkDirection(player, howMany - defenseDistance + 1, counter, counter2, playerCounter, j);
-                    if ( results[0] == howMany - defenseDistance && board[counter][counter2] == 0) {
+                    playerCounter = checkMiddleCell(player, howMany, counter, counter2);
+                    if ( playerCounter == howMany - defenseDistance + 1 && board[counter][counter2] == 0) {
                         move[0] = 1;
                         move[1] = counter;
                         move[2] = counter2;
                         return move;
                     }
-                    playerCounter = checkMiddleCell(player, howMany - defenseDistance + 1, counter, counter2);
+                    playerCounter = checkMiddleCell(player, howMany, counter, counter2);
                     if ( playerCounter == howMany - defenseDistance && board[counter][counter2] == 0) {
+                        move[0] = 1;
+                        move[1] = counter;
+                        move[2] = counter2;
+                        return move;
+                    }
+                    playerCounter = 0;
+                    results = checkDirection(player, howMany - defenseDistance + 1, counter, counter2, playerCounter, j);
+                    if ( results[0] == howMany - defenseDistance && board[counter][counter2] == 0) {
                         move[0] = 1;
                         move[1] = counter;
                         move[2] = counter2;
@@ -304,7 +312,10 @@ public class Game implements GameInterface {
     public int checkMiddleCell(int player, int lineLength, int rowToCheck, int colToCheck){
         int distance= (lineLength/2)+1;
         int playerCounter = 0;
-
+        boolean occupiedByPlayer = false;
+        if(board[rowToCheck][colToCheck] == player){
+            occupiedByPlayer = true;
+        }
         int upSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 0)[0];
         int downSigns = checkDirection(player, distance, rowToCheck, colToCheck, playerCounter, 4)[0];
         int verticalSigns = upSigns + downSigns;
@@ -332,6 +343,9 @@ public class Game implements GameInterface {
         }
         if (SlashSigns > playerCounter){
             playerCounter = SlashSigns;
+        }
+        if(occupiedByPlayer){
+            playerCounter--;
         }
         return playerCounter;
     }
